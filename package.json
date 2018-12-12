@@ -1,0 +1,21 @@
+{
+  "name": "@trippnology/super-simple-scraper",
+  "version": "0.1.0",
+  "description": "Commandline module to scrape web content.",
+  "main": "index.js",
+  "dependencies": {
+    "cheerio": "0.22.0",
+    "commander": "2.15.1",
+    "culoare": "1.2.1",
+    "query-string": "6.1.0",
+    "request": "2.85.0",
+    "underscore": "1.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED"
+}
