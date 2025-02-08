@@ -9,7 +9,6 @@
     "culoare": "1.2.1",
     "lodash": "4.17.21",
     "parse-magnet-uri": "4.0.0",
-    "query-string": "6.1.0",
     "request": "2.88.2"
   },
   "scripts": {

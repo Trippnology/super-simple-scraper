@@ -4,7 +4,6 @@ const cheerio = require('cheerio');
 const colors = require('culoare');
 const parseMagnet = require('parse-magnet-uri').parseMagnet;
 const { program } = require('commander');
-const queryString = require('query-string');
 const request = require('request');
 
 const pkg = require('./package.json');
@@ -68,7 +67,6 @@ function output(body) {
 	 * Run with: node ./ -u https://thepiratebay.org/search.php?q=top100:48h -s 'a[href^="magnet"]' -f hash
 	 */
 	$.prototype.logInfohash = function () {
-		//var hash = queryString.parse(this[0].attribs.href).info_hash;
 		const magnetURL = this[0].attribs.href;
 		const magnet = parseMagnet(magnetURL);
 		console.log(magnet.infoHash);
