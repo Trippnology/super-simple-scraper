@@ -71,23 +71,27 @@ async function output(body) {
 	};
 
 	$content.each(function (i, elem) {
-		if (options.format === 'hash') {
-			$(this).logInfohash();
-		}
-		if (options.format === 'html') {
-			$(this).logHtml();
-		}
-		if (options.format === 'json') {
-			$(this).logJSON();
-		}
-		if (options.format === 'link') {
-			$(this).logLink(elem);
-		}
-		if (options.format === 'object') {
-			$content.logObject();
-		}
-		if (options.format === 'text') {
-			$content.logText(elem);
+		switch (options.format) {
+			case 'hash':
+				$(this).logInfohash();
+				break;
+			case 'html':
+				$(this).logHtml();
+				break;
+			case 'json':
+				$(this).logJSON();
+				break;
+			case 'link':
+				$(this).logLink(elem);
+				break;
+			case 'object':
+				$content.logObject();
+				break;
+			case 'text':
+				$content.logText(elem);
+				break;
+			default:
+				console.error('Invalid format option');
 		}
 	});
 
