@@ -1,17 +1,13 @@
 #!/usr/bin/env node
 
+const axios = require('axios');
 const cheerio = require('cheerio');
 const colors = require('culoare');
 const parseMagnet = require('parse-magnet-uri').parseMagnet;
 const { program } = require('commander');
-const request = require('request');
 
 const pkg = require('./package.json');
 
-/*request.defaults({
-	proxy: 'http://cache.trippnology.net:3128',
-	tunnel: true,
-});*/
 /* Help */
 program
 	.version(pkg.version)
@@ -113,13 +109,12 @@ function output(body) {
 	}
 }
 
-request(options.url, (error, response, body) => {
-	if (!error) {
-		if (response.statusCode === 200) {
-			output(body);
-		}
-	} else {
-		console.log('Error getting %s', program.url);
+axios
+	.get(options.url)
+	.then((response) => {
+		output(response.data);
+	})
+	.catch((error) => {
+		console.error('Error getting %s', options.url);
 		console.error(error);
-	}
-});
+	});
