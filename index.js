@@ -3,6 +3,7 @@
 /* Dependencies */
 // https://github.com/strathausen/culoare
 var colors = require('culoare');
+var parseMagnet = require('parse-magnet-uri').parseMagnet;
 // https://github.com/tj/commander.js
 var program = require('commander');
 var request = require('request');
@@ -33,7 +34,7 @@ program
 	.option(
 		'-f, --format [format]',
 		'Output infohash, HTML, JSON, object or text',
-		/^(hash|html|json|object|text)$/i,
+		/^(hash|html|json|link|object|text)$/i,
 		'html'
 	);
 
@@ -79,17 +80,27 @@ function output(body) {
 
 	/*
 	 * This bit is just for testing if we can grab infohashes this way
-	 * Run with: node index.js -u https://btdigg.org/top100.html -s ".torrent_info_tbl a" -f hash
+	 * Run with: node ./ -u https://thepiratebay.org/top/48hall -s 'a[href^="magnet"]' -f hash
 	 */
 	$.prototype.logInfohash = function() {
-		var hash = queryString.parse(this[0].attribs.href).info_hash;
-		console.log(hash);
+		//var hash = queryString.parse(this[0].attribs.href).info_hash;
+		var magnetURL = this[0].attribs.href;
+		var magnet = parseMagnet(magnetURL);
+		console.log(magnet.infoHash);
 	};
 
 	// Not working due to circular references
+	var hash_array = [];
 	$.prototype.logJSON = function() {
-		console.log(this);
-		console.log(JSON.stringify(this[0]));
+		//console.log(this);
+		//console.log(JSON.stringify(this[0]));
+		var magnetURL = this[0].attribs.href;
+		var magnet = parseMagnet(magnetURL);
+		hash_array.push(magnet.infoHash);
+	};
+
+	$.prototype.logLink = function(elem) {
+		console.log(elem.attribs.href);
 	};
 
 	$content.each(function(i, elem) {
@@ -100,7 +111,11 @@ function output(body) {
 			$(this).logHtml();
 		}
 		if (program.format == 'json') {
-			$content.logJSON();
+			//$content.logJSON();
+			$(this).logJSON();
+		}
+		if (program.format == 'link') {
+			$(this).logLink(elem);
 		}
 		if (program.format == 'object') {
 			$content.logObject();
@@ -109,11 +124,15 @@ function output(body) {
 			$content.logText(elem);
 		}
 	});
+
+	if (hash_array.length) {
+		console.log(JSON.stringify(hash_array));
+	}
 }
 
 request(program.url, function(error, response, body) {
 	if (!error) {
-		console.log('Status: %s', response.statusCode);
+		//console.log('Status: %s', response.statusCode);
 		if (response.statusCode == 200) {
 			output(body);
 		}
