@@ -28,75 +28,71 @@ program.parse();
 const options = program.opts();
 
 /* Main body of the program */
-async function output(body) {
+async function parse(body) {
 	const $ = cheerio.load(body);
-	const $html = $('html');
-	const $content = $html.find(options.selector);
+	const $content = $(options.selector);
 
-	$.prototype.logObject = function () {
-		console.log(this);
-	};
+	let result;
 
-	$.prototype.logText = (elem) => {
-		const text = elem.children[0].data;
-		if (!text) {
-			return;
-		}
-		console.log(text);
-	};
+	switch (options.format) {
+		case 'hash':
+			result = $content
+				.map((i, elem) => {
+					const magnetURL = elem.attribs.href;
+					const magnet = parseMagnet(magnetURL);
+					return magnet.infoHash;
+				})
+				.get();
+			break;
+		case 'html':
+			result = $content.html();
+			if (result === null) {
+				console.error('Could not find %s', options.selector);
+				result = [];
+			}
+			break;
+		case 'json':
+			result = $content
+				.map((i, elem) => {
+					const magnetURL = elem.attribs.href;
+					const magnet = parseMagnet(magnetURL);
+					return magnet.infoHash;
+				})
+				.get();
+			break;
+		case 'link':
+			result = $content.map((i, elem) => elem.attribs.href).get();
+			break;
+		case 'object':
+			result = $content;
+			break;
+		case 'text':
+			result = $content.text().trim().split('\n');
+			break;
+		default:
+			console.error('Invalid format option');
+			result = [];
+	}
 
-	$.prototype.logHtml = function () {
-		const html = this.html();
-		if (html === null) {
-			return console.error('Could not find %s', options.selector);
-		}
-		console.log(html);
-	};
+	return result;
+}
 
-	$.prototype.logInfohash = function () {
-		const magnetURL = this[0].attribs.href;
-		const magnet = parseMagnet(magnetURL);
-		console.log(magnet.infoHash);
-	};
-
-	const hash_array = [];
-	$.prototype.logJSON = function () {
-		const magnetURL = this[0].attribs.href;
-		const magnet = parseMagnet(magnetURL);
-		hash_array.push(magnet.infoHash);
-	};
-
-	$.prototype.logLink = (elem) => {
-		console.log(elem.attribs.href);
-	};
-
-	$content.each(function (i, elem) {
-		switch (options.format) {
-			case 'hash':
-				$(this).logInfohash();
-				break;
-			case 'html':
-				$(this).logHtml();
-				break;
-			case 'json':
-				$(this).logJSON();
-				break;
-			case 'link':
-				$(this).logLink(elem);
-				break;
-			case 'object':
-				$content.logObject();
-				break;
-			case 'text':
-				$content.logText(elem);
-				break;
-			default:
-				console.error('Invalid format option');
-		}
-	});
-
-	if (hash_array.length) {
-		console.log(JSON.stringify(hash_array));
+async function output(result) {
+	switch (options.format) {
+		case 'hash':
+		case 'json':
+			console.log(JSON.stringify(result));
+			break;
+		case 'html':
+		case 'link':
+		case 'text':
+			result.forEach((item) => console.log(item));
+			break;
+		case 'object':
+			console.log(result);
+			break;
+		default:
+			console.error('Invalid format option');
 	}
 }
 
@@ -106,7 +102,8 @@ async function scrape() {
 		if (response.status !== 200) {
 			throw new Error(`Unexpected status code: ${response.status}`);
 		}
-		output(response.data);
+		const result = await parse(response.data);
+		output(result);
 	} catch (error) {
 		console.error('Error getting %s', options.url);
 		if (error.response) {
