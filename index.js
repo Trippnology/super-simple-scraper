@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const _ = require('underscore');
 const cheerio = require('cheerio');
 const colors = require('culoare');
 const parseMagnet = require('parse-magnet-uri').parseMagnet;
