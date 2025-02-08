@@ -38,7 +38,7 @@ async function output(body) {
 	};
 
 	$.prototype.logText = (elem) => {
-		const text = elem.children[0].next.data;
+		const text = elem.children[0].data;
 		if (!text) {
 			return;
 		}
