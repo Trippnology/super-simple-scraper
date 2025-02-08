@@ -26,6 +26,11 @@ program
 program.parse();
 const options = program.opts();
 
+/**
+ * Parses the HTML content based on the specified format.
+ * @param {string} body - The HTML content to parse.
+ * @returns {Array} - An array containing the parsed data.
+ */
 async function parse(body) {
 	const $ = cheerio.load(body);
 	const $content = $(options.selector);
@@ -75,6 +80,10 @@ async function parse(body) {
 	return result;
 }
 
+/**
+ * Outputs the parsed data based on the specified format.
+ * @param {Array} result - The parsed data to output.
+ */
 async function output(result) {
 	switch (options.format) {
 		case 'hash':
@@ -94,6 +103,9 @@ async function output(result) {
 	}
 }
 
+/**
+ * Scrapes the specified URL and outputs the data.
+ */
 async function scrape() {
 	try {
 		const response = await axios.get(options.url, { timeout: 10000 });
@@ -103,7 +115,7 @@ async function scrape() {
 		const result = await parse(response.data);
 		output(result);
 	} catch (error) {
-		console.error('Error getting %s', options.url);
+		console.error('Error scraping %s', options.url);
 		if (error.response) {
 			console.error(
 				`Server responded with status code ${error.response.status}`,
