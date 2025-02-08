@@ -7,7 +7,7 @@ const { program } = require('commander');
 
 const pkg = require('./package.json');
 
-/* Help */
+// CLI options
 program
 	.version(pkg.version)
 	.option(
@@ -23,11 +23,9 @@ program
 		'link',
 	);
 
-// Deal with arguments
 program.parse();
 const options = program.opts();
 
-/* Main body of the program */
 async function parse(body) {
 	const $ = cheerio.load(body);
 	const $content = $(options.selector);
