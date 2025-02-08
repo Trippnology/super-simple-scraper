@@ -1,77 +1,72 @@
 #!/usr/bin/env node
 
-/* Dependencies */
-// https://github.com/strathausen/culoare
-var colors = require('culoare');
-var parseMagnet = require('parse-magnet-uri').parseMagnet;
-// https://github.com/tj/commander.js
-var program = require('commander');
-var request = require('request');
+const _ = require('underscore');
+const cheerio = require('cheerio');
+const colors = require('culoare');
+const parseMagnet = require('parse-magnet-uri').parseMagnet;
+const program = require('commander');
+const queryString = require('query-string');
+const request = require('request');
+
+const pkg = require('./package.json');
+
 request.defaults({
 	proxy: 'http://cache.trippnology.net:3128',
-	tunnel: true
+	tunnel: true,
 });
-var cheerio = require('cheerio');
-var _ = require('underscore');
-var queryString = require('query-string');
-
-var pkg = require('./package.json');
-
 /* Help */
 program
 	.version(pkg.version)
 	.option(
 		'-u, --url [url]',
 		'The URL to scrape',
-		'http://trippnology.com/shed/ip/'
+		'https://trippnology.com/shed/ip/',
 	)
 	//.option('-u, --url [url]', 'The URL to scrape', 'https://www.google.co.uk/')
 	.option(
 		'-s, --selector [selector]',
 		'jQuery selector to return',
-		'#nav-block'
+		'#nav-block',
 	)
 	.option(
 		'-f, --format [format]',
 		'Output infohash, HTML, JSON, object or text',
 		/^(hash|html|json|link|object|text)$/i,
-		'html'
+		'html',
 	);
 
 // You might want to use named commands instead of just options
 program
 	.command('hello [name]')
 	.description('Forget pizza, say hello!')
-	.action(function(name) {
-		return console.log('Hello %s', name || 'World');
-	});
+	.action((name) => console.log('Hello %s', name || 'World'));
 
 // Deal with arguments
 program.parse(process.argv);
 
 /* Main body of the program */
 function output(body) {
-	var $ = cheerio.load(body);
-	var $html = $('html');
-	var $content = $html.find(program.selector);
+	const $ = cheerio.load(body);
+	const $html = $('html');
+	const $content = $html.find(program.selector);
 	// Can't get is() to work :(
-	var found = $html.is(program.selector);
+	const found = $html.is(program.selector);
 
-	$.prototype.logObject = function() {
+	$.prototype.logObject = function () {
 		console.log(this);
 	};
 
-	$.prototype.logText = function(elem) {
+	$.prototype.logText = (elem) => {
 		//var text = elem.children[0].data;
-		var text = elem.children[0].next.data;
+		const text = elem.children[0].next.data;
 		if (!text) {
 			return;
 		}
 		console.log(text);
 	};
 
-	$.prototype.logHtml = function() {
-		var html = this.html();
+	$.prototype.logHtml = function () {
+		const html = this.html();
 		if (html === null) {
 			return console.error('Could not find %s', program.selector);
 		}
@@ -80,47 +75,47 @@ function output(body) {
 
 	/*
 	 * This bit is just for testing if we can grab infohashes this way
-	 * Run with: node ./ -u https://thepiratebay.org/top/48hall -s 'a[href^="magnet"]' -f hash
+	 * Run with: node ./ -u https://thepiratebay.org/search.php?q=top100:48h -s 'a[href^="magnet"]' -f hash
 	 */
-	$.prototype.logInfohash = function() {
+	$.prototype.logInfohash = function () {
 		//var hash = queryString.parse(this[0].attribs.href).info_hash;
-		var magnetURL = this[0].attribs.href;
-		var magnet = parseMagnet(magnetURL);
+		const magnetURL = this[0].attribs.href;
+		const magnet = parseMagnet(magnetURL);
 		console.log(magnet.infoHash);
 	};
 
 	// Not working due to circular references
-	var hash_array = [];
-	$.prototype.logJSON = function() {
+	const hash_array = [];
+	$.prototype.logJSON = function () {
 		//console.log(this);
 		//console.log(JSON.stringify(this[0]));
-		var magnetURL = this[0].attribs.href;
-		var magnet = parseMagnet(magnetURL);
+		const magnetURL = this[0].attribs.href;
+		const magnet = parseMagnet(magnetURL);
 		hash_array.push(magnet.infoHash);
 	};
 
-	$.prototype.logLink = function(elem) {
+	$.prototype.logLink = (elem) => {
 		console.log(elem.attribs.href);
 	};
 
-	$content.each(function(i, elem) {
-		if (program.format == 'hash') {
+	$content.each(function (i, elem) {
+		if (program.format === 'hash') {
 			$(this).logInfohash();
 		}
-		if (program.format == 'html') {
+		if (program.format === 'html') {
 			$(this).logHtml();
 		}
-		if (program.format == 'json') {
+		if (program.format === 'json') {
 			//$content.logJSON();
 			$(this).logJSON();
 		}
-		if (program.format == 'link') {
+		if (program.format === 'link') {
 			$(this).logLink(elem);
 		}
-		if (program.format == 'object') {
+		if (program.format === 'object') {
 			$content.logObject();
 		}
-		if (program.format == 'text') {
+		if (program.format === 'text') {
 			$content.logText(elem);
 		}
 	});
@@ -130,10 +125,10 @@ function output(body) {
 	}
 }
 
-request(program.url, function(error, response, body) {
+request(program.url, (error, response, body) => {
 	if (!error) {
 		//console.log('Status: %s', response.statusCode);
-		if (response.statusCode == 200) {
+		if (response.statusCode === 200) {
 			output(body);
 		}
 	} else {
