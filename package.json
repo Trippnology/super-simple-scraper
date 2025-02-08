@@ -1,6 +1,6 @@
 {
 	"name": "@trippnology/super-simple-scraper",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Commandline module to scrape web content.",
 	"main": "index.js",
 	"bin": {
