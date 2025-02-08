@@ -47,3 +47,4 @@ Thumbs.db
 *.sublime-workspace
 sftp-config.json
 scratchpad.htm
+temp/
