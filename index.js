@@ -10,29 +10,25 @@ const request = require('request');
 
 const pkg = require('./package.json');
 
-request.defaults({
+/*request.defaults({
 	proxy: 'http://cache.trippnology.net:3128',
 	tunnel: true,
-});
+});*/
 /* Help */
 program
 	.version(pkg.version)
 	.option(
 		'-u, --url [url]',
 		'The URL to scrape',
-		'https://trippnology.com/shed/ip/',
+		'https://weather.trippnology.com',
 	)
 	//.option('-u, --url [url]', 'The URL to scrape', 'https://www.google.co.uk/')
-	.option(
-		'-s, --selector [selector]',
-		'jQuery selector to return',
-		'#nav-block',
-	)
+	.option('-s, --selector [selector]', 'jQuery selector to return', 'a')
 	.option(
 		'-f, --format [format]',
 		'Output infohash, HTML, JSON, object or text',
 		/^(hash|html|json|link|object|text)$/i,
-		'html',
+		'link',
 	);
 
 // You might want to use named commands instead of just options
@@ -127,7 +123,6 @@ function output(body) {
 
 request(program.url, (error, response, body) => {
 	if (!error) {
-		//console.log('Status: %s', response.statusCode);
 		if (response.statusCode === 200) {
 			output(body);
 		}
