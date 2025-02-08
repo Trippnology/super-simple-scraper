@@ -3,7 +3,7 @@
 const cheerio = require('cheerio');
 const colors = require('culoare');
 const parseMagnet = require('parse-magnet-uri').parseMagnet;
-const program = require('commander');
+const { program } = require('commander');
 const queryString = require('query-string');
 const request = require('request');
 
@@ -17,35 +17,30 @@ const pkg = require('./package.json');
 program
 	.version(pkg.version)
 	.option(
-		'-u, --url [url]',
+		'-u, --url <url>',
 		'The URL to scrape',
 		'https://weather.trippnology.com',
 	)
 	//.option('-u, --url [url]', 'The URL to scrape', 'https://www.google.co.uk/')
 	.option('-s, --selector [selector]', 'jQuery selector to return', 'a')
 	.option(
-		'-f, --format [format]',
+		'-f, --format <format>',
 		'Output infohash, HTML, JSON, object or text',
 		/^(hash|html|json|link|object|text)$/i,
 		'link',
 	);
 
-// You might want to use named commands instead of just options
-program
-	.command('hello [name]')
-	.description('Forget pizza, say hello!')
-	.action((name) => console.log('Hello %s', name || 'World'));
-
 // Deal with arguments
-program.parse(process.argv);
+program.parse();
+const options = program.opts();
 
 /* Main body of the program */
 function output(body) {
 	const $ = cheerio.load(body);
 	const $html = $('html');
-	const $content = $html.find(program.selector);
+	const $content = $html.find(options.selector);
 	// Can't get is() to work :(
-	const found = $html.is(program.selector);
+	const found = $html.is(options.selector);
 
 	$.prototype.logObject = function () {
 		console.log(this);
@@ -63,7 +58,7 @@ function output(body) {
 	$.prototype.logHtml = function () {
 		const html = this.html();
 		if (html === null) {
-			return console.error('Could not find %s', program.selector);
+			return console.error('Could not find %s', options.selector);
 		}
 		console.log(html);
 	};
@@ -94,23 +89,23 @@ function output(body) {
 	};
 
 	$content.each(function (i, elem) {
-		if (program.format === 'hash') {
+		if (options.format === 'hash') {
 			$(this).logInfohash();
 		}
-		if (program.format === 'html') {
+		if (options.format === 'html') {
 			$(this).logHtml();
 		}
-		if (program.format === 'json') {
+		if (options.format === 'json') {
 			//$content.logJSON();
 			$(this).logJSON();
 		}
-		if (program.format === 'link') {
+		if (options.format === 'link') {
 			$(this).logLink(elem);
 		}
-		if (program.format === 'object') {
+		if (options.format === 'object') {
 			$content.logObject();
 		}
-		if (program.format === 'text') {
+		if (options.format === 'text') {
 			$content.logText(elem);
 		}
 	});
@@ -120,7 +115,7 @@ function output(body) {
 	}
 }
 
-request(program.url, (error, response, body) => {
+request(options.url, (error, response, body) => {
 	if (!error) {
 		if (response.statusCode === 200) {
 			output(body);
