@@ -15,7 +15,6 @@ program
 		'The URL to scrape',
 		'https://weather.trippnology.com',
 	)
-	//.option('-u, --url [url]', 'The URL to scrape', 'https://www.google.co.uk/')
 	.option('-s, --selector [selector]', 'jQuery selector to return', 'a')
 	.option(
 		'-f, --format <format>',
@@ -29,19 +28,16 @@ program.parse();
 const options = program.opts();
 
 /* Main body of the program */
-function output(body) {
+async function output(body) {
 	const $ = cheerio.load(body);
 	const $html = $('html');
 	const $content = $html.find(options.selector);
-	// Can't get is() to work :(
-	const found = $html.is(options.selector);
 
 	$.prototype.logObject = function () {
 		console.log(this);
 	};
 
 	$.prototype.logText = (elem) => {
-		//var text = elem.children[0].data;
 		const text = elem.children[0].next.data;
 		if (!text) {
 			return;
@@ -57,21 +53,14 @@ function output(body) {
 		console.log(html);
 	};
 
-	/*
-	 * This bit is just for testing if we can grab infohashes this way
-	 * Run with: node ./ -u https://thepiratebay.org/search.php?q=top100:48h -s 'a[href^="magnet"]' -f hash
-	 */
 	$.prototype.logInfohash = function () {
 		const magnetURL = this[0].attribs.href;
 		const magnet = parseMagnet(magnetURL);
 		console.log(magnet.infoHash);
 	};
 
-	// Not working due to circular references
 	const hash_array = [];
 	$.prototype.logJSON = function () {
-		//console.log(this);
-		//console.log(JSON.stringify(this[0]));
 		const magnetURL = this[0].attribs.href;
 		const magnet = parseMagnet(magnetURL);
 		hash_array.push(magnet.infoHash);
@@ -89,7 +78,6 @@ function output(body) {
 			$(this).logHtml();
 		}
 		if (options.format === 'json') {
-			//$content.logJSON();
 			$(this).logJSON();
 		}
 		if (options.format === 'link') {
@@ -108,12 +96,25 @@ function output(body) {
 	}
 }
 
-axios
-	.get(options.url)
-	.then((response) => {
+async function scrape() {
+	try {
+		const response = await axios.get(options.url, { timeout: 10000 });
+		if (response.status !== 200) {
+			throw new Error(`Unexpected status code: ${response.status}`);
+		}
 		output(response.data);
-	})
-	.catch((error) => {
+	} catch (error) {
 		console.error('Error getting %s', options.url);
-		console.error(error);
-	});
+		if (error.response) {
+			console.error(
+				`Server responded with status code ${error.response.status}`,
+			);
+		} else if (error.request) {
+			console.error(`Request failed: ${error.message}`);
+		} else {
+			console.error(`An unexpected error occurred: ${error.message}`);
+		}
+	}
+}
+
+scrape();
