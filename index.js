@@ -70,7 +70,7 @@ async function parse(body) {
 			result = $content;
 			break;
 		case 'text':
-			result = $content.text().trim().split('\n');
+			result = $content.map((i, elem) => $(elem).text()).get();
 			break;
 		default:
 			console.error('Invalid format option');
@@ -93,7 +93,8 @@ async function output(result) {
 		case 'html':
 		case 'link':
 		case 'text':
-			result.forEach((item) => console.log(item));
+			//result.forEach((item) => console.log(item));
+			console.log(result.join('\n'));
 			break;
 		case 'object':
 			console.log(result);
