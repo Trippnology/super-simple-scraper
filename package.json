@@ -4,9 +4,10 @@
   "description": "Commandline module to scrape web content.",
   "main": "index.js",
   "dependencies": {
-    "cheerio": "0.22.0",
+    "cheerio": "1.0.0",
     "commander": "2.15.1",
     "culoare": "1.2.1",
+    "lodash": "4.17.21",
     "parse-magnet-uri": "4.0.0",
     "query-string": "6.1.0",
     "request": "2.88.2"
