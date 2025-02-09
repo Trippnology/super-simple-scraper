@@ -126,6 +126,7 @@ async function output(result) {
 
 /**
  * Scrapes the specified URL and outputs the data.
+ * @param {String} url - The URL to fetch.
  */
 async function scrape(url) {
 	try {
