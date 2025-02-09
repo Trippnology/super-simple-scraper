@@ -19,7 +19,7 @@ program
 	.option(
 		'-c, --content <type>',
 		'Process this element in various ways',
-		/^(hash|html|json|link|object|text)$/i,
+		/^(hash|html|image|json|link|object|text)$/i,
 		'link',
 	)
 	.option(
@@ -61,6 +61,9 @@ async function parse(body) {
 			break;
 		case 'html':
 			result = $content.map((i, elem) => $(elem).html()).get();
+			break;
+		case 'image':
+			result = $content.map((i, elem) => elem.attribs.src).get();
 			break;
 		case 'json':
 			result = $content
