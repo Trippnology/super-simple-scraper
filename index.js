@@ -56,11 +56,7 @@ async function parse(body) {
 				.get();
 			break;
 		case 'html':
-			result = $content.html();
-			if (result === null) {
-				console.error('Could not find %s', options.selector);
-				result = [];
-			}
+			result = $content.map((i, elem) => $(elem).html()).get();
 			break;
 		case 'json':
 			result = $content
