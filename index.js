@@ -10,11 +10,7 @@ const pkg = require('./package.json');
 // CLI options
 program
 	.version(pkg.version)
-	.option(
-		'-u, --url <url>',
-		'The URL to scrape',
-		'https://weather.trippnology.com',
-	)
+	.requiredOption('-u, --url <url>', 'The URL to scrape')
 	.option('-s, --selector <selector>', 'jQuery selector to find', 'a')
 	.option(
 		'-c, --content <type>',
