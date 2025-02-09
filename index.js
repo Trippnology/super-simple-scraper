@@ -9,7 +9,6 @@ const pkg = require('./package.json');
 
 // CLI options
 program
-	.version(pkg.version)
 	.requiredOption('-u, --url <url>', 'The URL to scrape')
 	.option('-s, --selector <selector>', 'jQuery selector to find', 'a')
 	.addOption(
@@ -33,20 +32,21 @@ program
 		new Option('-o, --output <format>', 'Output format')
 			.choices(['html', 'json', 'object', 'text'])
 			.default('text'),
-	);
+	)
+	.version(pkg.version);
 program.addHelpText(
 	'after',
 	`
 
 Examples:
   Find all links and return their href
-  $ sss -u http://192.168.0.60:8080/test.html -s a -c link
+  $ sss -u http://localhost:8080/test.html -s a -c link
   Find all links and return their text
-  $ sss -u http://192.168.0.60:8080/test.html -s a -c text
+  $ sss -u http://localhost:8080/test.html -s a -c text
   Find all images and return their src
-  $ sss -u http://192.168.0.60:8080/test.html -s img -c image
+  $ sss -u http://localhost:8080/test.html -s img -c image
   Find all magnet links and return their infohash
-  $ sss -u http://192.168.0.60:8080/test.html -s a[href^=magnet] -c hash
+  $ sss -u http://localhost:8080/test.html -s a[href^=magnet] -c hash
 	`,
 );
 
