@@ -1,10 +1,18 @@
 # Super Simple Scraper
 
-A simple command-line tool for scraping HTML content from a given URL and extracting data based on specified options.
+A simple command-line tool for scraping HTML content from a given URL and extracting data for further processing.
+
+Good for grabbing all image/link/magnet URLs from a page, or extracting the text of certain elements.
+
+NOT for scraping entire page content.
 
 ## Installation
 
-To install the `super-simple-scraper`, follow these steps:
+### From npm
+
+`npm i -g @trippnology/super-simple-scraper`
+
+### From source
 
 1. **Clone the repository:**
 
@@ -35,33 +43,70 @@ To install the `super-simple-scraper`, follow these steps:
 You can run the scraper using the following command:
 
 ```bash
+sss [options]
+```
+
+Or if you installed from source:
+
+```bash
 node index.js [options]
 ```
 
 ### Options
 
-- `-u, --url <url>`: The URL to scrape. Default is `https://weather.trippnology.com`.
-- `-s, --selector <selector>`: jQuery selector to return. Default is `a`.
-- `-f, --format <format>`: Output format (`hash`, `html`, `json`, `link`, `object`, or `text`). Default is `link`.
+- `-u, --url <url>`: The URL to scrape (required).
+- `-s, --selector <selector>`: CSS selector to find. Default is `a`.
+- `-c, --content <type>`: Process each element as this type of content (`hash`, `html`, `image`, `json`, `link`, `object`, or `text`). Default is `link`.
+- `-o, --output <format>`: Output format (`html`, `json`, `object`, or `text`). Default is `text`.
 
 ### Examples
 
-1. **Scrape a specific URL with default options:**
+1. **Scrape a specific URL with default options:** (this will find all links and return their hrefs)
 
     ```bash
-    node index.js -u https://example.com
+    sss -u https://example.com
     ```
 
-2. **Scrape a URL and extract magnet links as info hashes:**
+2. **Find all elements with a class of `.foo` and grab their HTML contents:**
 
     ```bash
-    node index.js -u https://example.com -s .magnet-link -f hash
+    sss -u https://example.com -s .foo -c html
     ```
 
-3. **Scrape a URL and output JSON format:**
+3. **Find all links and return their href:**
 
     ```bash
-    node index.js -u https://example.com -f json
+    sss -u http://localhost:8080/test.html -s a -c link
+    ```
+
+4. **Find all links and return their text:**
+
+    ```bash
+    sss -u http://localhost:8080/test.html -s a -c text
+    ```
+
+5. **Find all images and return their src:**
+
+    ```bash
+    sss -u http://localhost:8080/test.html -s img -c image
+    ```
+
+6. **Find all magnet links and return their infohash:**
+
+    ```bash
+    sss -u http://localhost:8080/test.html -s a[href^=magnet] -c hash
+    ```
+
+7. **Find all scripts containing JSON and return their contents:**
+
+    ```bash
+    sss -u http://localhost:8080/test.html -s script[type="application/json"] -c json
+    ```
+
+8. **Find all elements with a class of `.foo` and return the full [cheerio](https://cheerio.js.org/) object (useful for debugging):**
+
+    ```bash
+    sss -u http://localhost:8080/test.html -s .foo -c object -f object
     ```
 
 ## Contributing
@@ -78,7 +123,7 @@ node index.js [options]
 
 ## Credits
 
-- [@trippnology](https://github.com/trippnology) - Initial development and maintenance.
+- &copy; [Trippnology](https://trippnology.com)
 
 ## License
 

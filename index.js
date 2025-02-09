@@ -9,13 +9,12 @@ const pkg = require('./package.json');
 
 // CLI options
 program
-	.requiredOption('-u, --url <url>', 'The URL to scrape')
-	.option('-s, --selector <selector>', 'jQuery selector to find', 'a')
+	.requiredOption('-u, --url <url>', 'The URL to scrape (required)')
+	.option('-s, --selector <selector>', 'CSS selector to find', 'a')
 	.addOption(
 		new Option(
 			'-c, --content <type>',
-			'Process this element in various ways',
-			'link',
+			'Process each element as this type of content',
 		)
 			.choices([
 				'hash',
@@ -26,7 +25,7 @@ program
 				'object',
 				'text',
 			])
-			.default('text'),
+			.default('link'),
 	)
 	.addOption(
 		new Option('-o, --output <format>', 'Output format')
