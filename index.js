@@ -36,11 +36,9 @@ async function parse(body) {
 	const $content = $(options.selector);
 
 	if (!$content.length) {
-		console.error(
-			'Could not find any elements matching %s',
-			options.selector,
+		throw new Error(
+			`Could not find any elements matching ${options.selector}`,
 		);
-		return [];
 	}
 
 	let result;
@@ -77,8 +75,7 @@ async function parse(body) {
 			result = $content.map((i, elem) => $(elem).text()).get();
 			break;
 		default:
-			console.error('Invalid format option');
-			result = [];
+			throw new Error('Invalid format option');
 	}
 
 	return result;
@@ -97,40 +94,47 @@ async function output(result) {
 		case 'html':
 		case 'link':
 		case 'text':
-			//result.forEach((item) => console.log(item));
 			console.log(result.join('\n'));
 			break;
 		case 'object':
 			console.log(result);
 			break;
 		default:
-			console.error('Invalid format option');
+			throw new Error('Invalid format option');
 	}
 }
 
 /**
  * Scrapes the specified URL and outputs the data.
  */
-async function scrape() {
+async function scrape(url) {
 	try {
-		const response = await axios.get(options.url, { timeout: 10000 });
+		const response = await axios.get(url, { timeout: 10000 });
 		if (response.status !== 200) {
 			throw new Error(`Unexpected status code: ${response.status}`);
 		}
-		const result = await parse(response.data);
-		output(result);
+		return response.data;
 	} catch (error) {
-		console.error('Error scraping %s', options.url);
 		if (error.response) {
-			console.error(
+			throw new Error(
 				`Server responded with status code ${error.response.status}`,
 			);
-		} else if (error.request) {
-			console.error(`Request failed: ${error.message}`);
-		} else {
-			console.error(`An unexpected error occurred: ${error.message}`);
 		}
+		if (error.request) {
+			throw new Error(`Request failed: ${error.message}`);
+		}
+		throw new Error(`An unexpected error occurred: ${error.message}`);
 	}
 }
 
-scrape();
+async function go() {
+	return scrape(options.url)
+		.then(parse)
+		.then(output)
+		.catch((error) => {
+			console.log(error.message);
+			process.exit(1);
+		});
+}
+
+go();
