@@ -59,6 +59,10 @@ node index.js [options]
 - `-c, --content <type>`: Process each element as this type of content (`hash`, `html`, `image`, `json`, `link`, `object`, or `text`). Default is `link`.
 - `-o, --output <format>`: Output format (`html`, `json`, `object`, or `text`). Default is `text`.
 
+It's up to you to use sensible combinations of options. If you select all images, then try to process them as links, you're not going to get any results!
+
+Use the `-c object` and `-o object` options together to get the full [cheerio](https://cheerio.js.org/) object for debugging. You can use this to make sure you are dealing with the DOM that you think you are!
+
 ### Examples
 
 1. **Scrape a specific URL with default options:** (this will find all links and return their hrefs)
@@ -103,7 +107,7 @@ node index.js [options]
     sss -u http://localhost:8080/test.html -s script[type="application/json"] -c json
     ```
 
-8. **Find all elements with a class of `.foo` and return the full [cheerio](https://cheerio.js.org/) object (useful for debugging):**
+8. **Find all elements with a class of `.foo` and return the full cheerio object (useful for debugging):**
 
     ```bash
     sss -u http://localhost:8080/test.html -s .foo -c object -f object
