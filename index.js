@@ -53,8 +53,7 @@ async function parse(body) {
 		case 'hash':
 			result = $content
 				.map((i, elem) => {
-					const magnetURL = elem.attribs.href;
-					const magnet = parseMagnet(magnetURL);
+					const magnet = parseMagnet(elem.attribs.href);
 					return magnet.infoHash;
 				})
 				.get();
