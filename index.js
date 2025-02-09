@@ -24,6 +24,21 @@ program
 		/^(html|json|object|text)$/i,
 		'text',
 	);
+program.addHelpText(
+	'after',
+	`
+
+Examples:
+  Find all links and return their href
+  $ sss -u http://192.168.0.60:8080/test.html -s a -c link
+  Find all links and return their text
+  $ sss -u http://192.168.0.60:8080/test.html -s a -c text
+  Find all images and return their src
+  $ sss -u http://192.168.0.60:8080/test.html -s img -c image
+  Find all magnet links and return their infohash
+  $ sss -u http://192.168.0.60:8080/test.html -s a[href^=magnet] -c hash
+	`,
+);
 
 program.parse();
 const options = program.opts();
