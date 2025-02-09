@@ -3,7 +3,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const parseMagnet = require('parse-magnet-uri').parseMagnet;
-const { program } = require('commander');
+const { program, Option } = require('commander');
 
 const pkg = require('./package.json');
 
@@ -12,17 +12,27 @@ program
 	.version(pkg.version)
 	.requiredOption('-u, --url <url>', 'The URL to scrape')
 	.option('-s, --selector <selector>', 'jQuery selector to find', 'a')
-	.option(
-		'-c, --content <type>',
-		'Process this element in various ways',
-		/^(hash|html|image|json|link|object|text)$/i,
-		'link',
+	.addOption(
+		new Option(
+			'-c, --content <type>',
+			'Process this element in various ways',
+			'link',
+		)
+			.choices([
+				'hash',
+				'html',
+				'image',
+				'json',
+				'link',
+				'object',
+				'text',
+			])
+			.default('text'),
 	)
-	.option(
-		'-o, --output <format>',
-		'Output format',
-		/^(html|json|object|text)$/i,
-		'text',
+	.addOption(
+		new Option('-o, --output <format>', 'Output format')
+			.choices(['html', 'json', 'object', 'text'])
+			.default('text'),
 	);
 program.addHelpText(
 	'after',
