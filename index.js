@@ -15,12 +15,18 @@ program
 		'The URL to scrape',
 		'https://weather.trippnology.com',
 	)
-	.option('-s, --selector [selector]', 'jQuery selector to return', 'a')
+	.option('-s, --selector <selector>', 'jQuery selector to find', 'a')
 	.option(
-		'-f, --format <format>',
-		'Output infohash, HTML, JSON, object or text',
+		'-c, --content <type>',
+		'Process this element in various ways',
 		/^(hash|html|json|link|object|text)$/i,
 		'link',
+	)
+	.option(
+		'-o, --output <format>',
+		'Output format',
+		/^(html|json|object|text)$/i,
+		'text',
 	);
 
 program.parse();
@@ -43,7 +49,7 @@ async function parse(body) {
 
 	let result;
 
-	switch (options.format) {
+	switch (options.content) {
 		case 'hash':
 			result = $content
 				.map((i, elem) => {
@@ -86,13 +92,11 @@ async function parse(body) {
  * @param {Array} result - The parsed data to output.
  */
 async function output(result) {
-	switch (options.format) {
-		case 'hash':
+	switch (options.output) {
 		case 'json':
 			console.log(JSON.stringify(result));
 			break;
 		case 'html':
-		case 'link':
 		case 'text':
 			console.log(result.join('\n'));
 			break;
