@@ -38,6 +38,14 @@ NOT for scraping entire page content.
     chmod +x index.js
     ```
 
+5. **Link the repo as a local command (optional):**
+
+    ```bash
+    npm link
+    ```
+
+    You can now run `sss` globally, as if it was installed by npm.
+
 ## Usage
 
 You can run the scraper using the following command:
