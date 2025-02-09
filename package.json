@@ -1,6 +1,6 @@
 {
 	"name": "@trippnology/super-simple-scraper",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "A simple command-line tool for scraping HTML content from a given URL and extracting data for further processing.",
 	"main": "index.js",
 	"bin": {
