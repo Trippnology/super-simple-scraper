@@ -127,4 +127,4 @@ node index.js [options]
 
 ## License
 
-UNLICENSED
+MIT See the full [LICENSE file](./LICENSE)
