@@ -1,7 +1,7 @@
 {
 	"name": "@trippnology/super-simple-scraper",
 	"version": "0.2.0",
-	"description": "Commandline module to scrape web content.",
+	"description": "A simple command-line tool for scraping HTML content from a given URL and extracting data for further processing.",
 	"main": "index.js",
 	"bin": {
 		"sss": "index.js"
@@ -16,7 +16,18 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "MIT"
+	"keywords": [
+		"bittorrent",
+		"HTML",
+		"links",
+		"magnet",
+		"scraping",
+		"urls"
+	],
+	"author": "Rikki Tripp - Trippnology",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/trippnology/super-simple-scraper"
+	}
 }
