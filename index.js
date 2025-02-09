@@ -35,6 +35,14 @@ async function parse(body) {
 	const $ = cheerio.load(body);
 	const $content = $(options.selector);
 
+	if (!$content.length) {
+		console.error(
+			'Could not find any elements matching %s',
+			options.selector,
+		);
+		return [];
+	}
+
 	let result;
 
 	switch (options.format) {
